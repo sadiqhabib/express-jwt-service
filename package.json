@@ -1,0 +1,45 @@
+{
+  "name": "meanie-express-jwt-service",
+  "description": "A service for handling JSON Web Tokens, for use with Meanie Express Seed projects",
+  "version": "1.0.0",
+  "homepage": "https://github.com/meanie/express-jwt-service",
+  "author": {
+    "name": "Adam Buczynski",
+    "email": "me@adambuczynski.com",
+    "url": "http://adambuczynski.com/"
+  },
+  "contributors": [],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/meanie/express-jwt-service"
+  },
+  "bugs": {
+    "url": "https://github.com/meanie/express-jwt-service/issues"
+  },
+  "keywords": [
+    "meanie",
+    "express",
+    "jwt",
+    "service"
+  ],
+  "engines": {
+    "node": ">=6.3.0",
+    "npm": ">=3.10.3"
+  },
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint .",
+    "postversion": "git push && git push --tags && npm publish"
+  },
+  "dependencies": {
+    "bluebird": "^3.4.1",
+    "jsonwebtoken": "^7.1.6"
+  },
+  "peerDependencies": {
+    "meanie-express-error-types": "^1.0.6"
+  },
+  "devDependencies": {
+    "eslint": "^2.13.1"
+  }
+}
