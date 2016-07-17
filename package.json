@@ -37,7 +37,7 @@
     "jsonwebtoken": "^7.1.6"
   },
   "peerDependencies": {
-    "meanie-express-error-types": "^1.0.6"
+    "meanie-express-error-handling": "^1.0.3"
   },
   "devDependencies": {
     "eslint": "^2.13.1"
