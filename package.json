@@ -1,7 +1,7 @@
 {
   "name": "meanie-express-jwt-service",
   "description": "A service for handling JSON Web Tokens, for use with Meanie Express Seed projects",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "homepage": "https://github.com/meanie/express-jwt-service",
   "author": {
     "name": "Adam Buczynski",
