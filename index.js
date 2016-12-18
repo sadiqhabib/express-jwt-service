@@ -51,7 +51,7 @@ const service = module.exports = {
     }
 
     //Extend default config
-    config = service.getConfig(config);
+    config = service.mergeConfig(config);
 
     //Extract secret (removes it from the config object)
     const secret = service.extractSecret(config);
@@ -66,7 +66,7 @@ const service = module.exports = {
   validate(token, config) {
 
     //Extend default config
-    config = service.getConfig(config);
+    config = service.mergeConfig(config);
 
     //Extract secret (removes it from the config object)
     const secret = service.extractSecret(config);
