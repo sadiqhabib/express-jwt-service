@@ -3,11 +3,11 @@
 /**
  * Dependencies
  */
-let Promise = require('bluebird');
-let jwt = require('jsonwebtoken');
-let errors = require('meanie-express-error-handling');
-let InvalidTokenError = errors.InvalidTokenError;
-let ExpiredTokenError = errors.ExpiredTokenError;
+const Promise = require('bluebird');
+const jwt = require('jsonwebtoken');
+const errors = require('meanie-express-error-handling');
+const InvalidTokenError = errors.InvalidTokenError;
+const ExpiredTokenError = errors.ExpiredTokenError;
 
 /**
  * Check if token config is valid
@@ -22,13 +22,13 @@ function isValidConfig(config) {
 /**
  * Defaults and registered token types
  */
-let defaults = {};
-let TypesMap = new Map();
+const defaults = {};
+const TypesMap = new Map();
 
 /**
  * Module export
  */
-module.exports = {
+const service = module.exports = {
 
   /**
    * Expose error types
@@ -36,87 +36,44 @@ module.exports = {
   InvalidTokenError,
   ExpiredTokenError,
 
-  /**
-   * Set defaults
-   */
-  setDefaults(config) {
-    Object.assign(defaults, config);
-  },
-
-  /**
-   * Register token types
-   */
-  register(type, config) {
-
-    //Invalid input
-    if (!type) {
-      return;
-    }
-
-    //Handle object maps
-    if (typeof type === 'object') {
-      for (let key in type) {
-        if (type.hasOwnProperty(key)) {
-          this.register(key, type[key]);
-        }
-      }
-      return;
-    }
-
-    //Extend with default configuration and validate
-    config = Object.assign({}, defaults, config);
-    if (!isValidConfig(config)) {
-      throw new InvalidTokenError(
-        'Invalid token configuration for type `' + type + '`'
-      );
-    }
-
-    //Store in map
-    TypesMap.set(type, config);
-  },
+  /**************************************************************************
+   * Generation and validation
+   ***/
 
   /**
    * Generate a token
    */
-  generate(type, claims) {
+  generate(payload, config) {
 
-    //Check if type exists
-    if (!TypesMap.has(type)) {
-      throw new InvalidTokenError('Unknown token type `' + type + '`');
+    //If number given as config, use as expiration value
+    if (typeof config === 'number') {
+      config = {expiresIn: config};
     }
 
-    //Get config
-    let config = TypesMap.get(type);
+    //Extend default config
+    config = service.getConfig(config);
+
+    //Extract secret (removes it from the config object)
+    const secret = service.extractSecret(config);
 
     //Return signed token
-    return jwt.sign(claims || {}, config.secret, {
-      audience: config.audience,
-      issuer: config.issuer,
-      expiresIn: config.expiration,
-    });
+    return jwt.sign(payload || {}, secret, config);
   },
 
   /**
    * Validate a token
    */
-  validate(type, token) {
+  validate(token, config) {
 
-    //Check if type exists
-    if (!TypesMap.has(type)) {
-      return Promise.reject(
-        new InvalidTokenError('Unknown token type `' + type + '`')
-      );
-    }
+    //Extend default config
+    config = service.getConfig(config);
 
-    //Get config
-    let config = TypesMap.get(type);
+    //Extract secret (removes it from the config object)
+    const secret = service.extractSecret(config);
 
     //Return as promise
     return new Promise((resolve, reject) => {
-      jwt.verify(token, config.secret, {
-        audience: config.audience,
-        issuer: config.issuer,
-      }, (error, payload) => {
+      jwt.verify(token, secret, config, (error, payload) => {
         if (!error) {
           return resolve(payload);
         }
@@ -131,18 +88,99 @@ module.exports = {
     });
   },
 
+  /**************************************************************************
+   * Types handling
+   ***/
+
   /**
-   * Get the expiration of a certain token type
+   * Pre-register token types
    */
-  getExpiration(type) {
+  registerType(type, config) {
+
+    //Invalid input
+    if (!type) {
+      throw new Error('Must specify type or types object map');
+    }
+
+    //Handle object maps
+    if (typeof type === 'object') {
+      for (const key in type) {
+        if (type.hasOwnProperty(key)) {
+          service.register(key, type[key]);
+        }
+      }
+      return;
+    }
+
+    //Invalid input
+    if (typeof type !== 'string') {
+      throw new Error('Must specify string type');
+    }
+
+    //Extend with default configuration and validate
+    config = service.mergeConfig(config);
+    if (!isValidConfig(config)) {
+      throw new Error('Invalid token configuration for type `' + type + '`');
+    }
+
+    //Store in map
+    TypesMap.set(type, config);
+  },
+
+  /**
+   * Generate a token of a specific type
+   */
+  generateType(type, claims) {
+    const config = service.getType(type);
+    return service.generate(claims, config);
+  },
+
+  /**
+   * Validate a token of a specific type
+   */
+  validateType(type, token) {
+    const config = service.getType(type);
+    return service.validate(token, config);
+  },
+
+  /**
+   * Get config for a given type
+   */
+  getType(type) {
 
     //Check if type exists
     if (!TypesMap.has(type)) {
-      throw new InvalidTokenError('Unknown token type `' + type + '`');
+      throw new Error('Unknown token type `' + type + '`');
     }
 
-    //Get config and return expiration
-    let config = TypesMap.get(type);
-    return config.expiration || 0;
+    //Get config (is already merged with defaults)
+    return TypesMap.get(type);
+  },
+
+  /**************************************************************************
+   * Helpers
+   ***/
+
+  /**
+   * Set defaults
+   */
+  setDefaults(config) {
+    Object.assign(defaults, config);
+  },
+
+  /**
+   * Merge given configuration with defaults
+   */
+  mergeConfig(config) {
+    return Object.assign({}, defaults, config || {});
+  },
+
+  /**
+   * Extract secret from configuration object
+   */
+  extractSecret(config) {
+    const secret = config.secret || '';
+    delete config.secret;
+    return secret;
   },
 };
