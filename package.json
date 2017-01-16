@@ -24,8 +24,7 @@
     "service"
   ],
   "engines": {
-    "node": ">=6.3.0",
-    "npm": ">=3.10.3"
+    "node": ">=7.4.0"
   },
   "main": "index.js",
   "scripts": {
@@ -37,7 +36,7 @@
     "jsonwebtoken": "^7.1.6"
   },
   "peerDependencies": {
-    "meanie-express-error-handling": "^1.0.3"
+    "meanie-express-error-handling": ">=1.0.3"
   },
   "devDependencies": {
     "eslint": "^2.13.1"
