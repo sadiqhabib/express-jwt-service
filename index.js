@@ -5,7 +5,7 @@
  */
 const Promise = require('bluebird');
 const jwt = require('jsonwebtoken');
-const errors = require('meanie-express-error-handling');
+const errors = require('express-error-handling');
 const InvalidTokenError = errors.InvalidTokenError;
 const ExpiredTokenError = errors.ExpiredTokenError;
 
