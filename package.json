@@ -1,8 +1,8 @@
 {
-  "name": "meanie-express-jwt-service",
-  "description": "A service for handling JSON Web Tokens, for use with Meanie Express Seed projects",
+  "name": "express-jwt-service",
+  "description": "A service for handling JSON Web Tokens, for use with Express Seed projects",
   "version": "2.0.2",
-  "homepage": "https://github.com/meanie/express-jwt-service",
+  "homepage": "https://github.com/sadiqramzan/express-jwt-service",
   "author": {
     "name": "Adam Reis",
     "email": "adam@reis.nz",
@@ -12,10 +12,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/meanie/express-jwt-service"
+    "url": "https://github.com/sadiqramzan/express-jwt-service"
   },
   "bugs": {
-    "url": "https://github.com/meanie/express-jwt-service/issues"
+    "url": "https://github.com/sadiqramzan/express-jwt-service/issues"
   },
   "keywords": [
     "meanie",
@@ -36,7 +36,7 @@
     "jsonwebtoken": "^7.1.6"
   },
   "peerDependencies": {
-    "meanie-express-error-handling": ">=1.0.3"
+    "express-error-handling": ">=1.0.3"
   },
   "devDependencies": {
     "eslint": "^2.13.1"
